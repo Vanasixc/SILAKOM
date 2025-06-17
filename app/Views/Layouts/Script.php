@@ -5,18 +5,23 @@
 
 <script src="<?= base_url('assets/compiled/js/app.js') ?>"></script>
 
-<script src="<?= base_url('assets/extensions/sweetalert2/sweetalert2.min.js') ?>"></script>>
-<script src="<?= base_url('assets/static/js/pages/staticsweetalert2.js') ?>"></script>>
+<script src="<?= base_url('assets/extensions/sweetalert2/sweetalert2.min.js') ?>"></script>
+<script src="<?= base_url('assets/static/js/pages/staticsweetalert2.js') ?>"></script>
 
 
-<?php
-if ($title == 'Dashboard'): ?>
-    <!-- Need: Apexcharts -->
+<?php if ($title == 'Dashboard Admin'): ?>
+
     <script src="<?= base_url('assets/extensions/apexcharts/apexcharts.min.js') ?>"></script>
     <script src="<?= base_url('assets/static/js/pages/dashboard.js') ?>"></script>
     <script src="<?= base_url('assets/static/js/components/tooltip.js') ?>"></script>
 
-<?php elseif ($title == 'Barang' || $title == 'Manage Account'): ?>
+
+<?php elseif ($title == 'List Barang' || $title == 'Manage Account' || $title == 'Dashboard'): ?>
+    <?php if ($title == 'Dashboard'): ?>
+        <?= $this->include('layouts/script-time') ?>
+        <script src="<?= base_url('assets/static/js/pages/dashboard.js') ?>"></script>
+        <script src="<?= base_url('assets/static/js/components/tooltip.js') ?>"></script>
+    <?php endif; ?>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>

@@ -5,10 +5,10 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 
-class Home extends BaseController
+class Silakom extends BaseController
 {
     public function getIndex()
     {
-        return redirect()->to('auth');
+        return redirect()->to('dashboard');
     }
 }

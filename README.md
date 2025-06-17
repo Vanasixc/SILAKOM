@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CodeIgniter 4 Application Starter
 
 ## What is CodeIgniter?
@@ -66,3 +67,7 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 - json (enabled by default - don't turn it off)
 - [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
 - [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+=======
+# SILAKOM
+This is just my study for UAS Web Programming from my collage. SILAKOM (Sistem Laboratorium Komputer) is Warehouse Management System (WMS)  with template Mazer (thx to @zuramai)  and use Codeigniter4 for framework.
+>>>>>>> d671156e67bae37aa446faa49a8b2c9cf770e643

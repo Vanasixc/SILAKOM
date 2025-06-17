@@ -19,18 +19,18 @@
     if ($title == 'Login' || $title == 'Register'): ?>
         <link rel="stylesheet" href="<?= base_url('assets/compiled/css/auth.css') ?>">
 
-    <?php elseif ($title == 'Dashboard'): ?>
+    <?php elseif ($title == 'Dashboard Admin' || $title == 'Dashboard'): ?>
+        <?php if ($title == 'Dashboard'): ?>
+            <link rel="stylesheet" href="<?= base_url('assets/compiled/css/time.css') ?> ">
+            <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
+        <?php endif; ?>
         <link rel="stylesheet" href="<?= base_url('assets/compiled/css/iconly.css') ?> ">
 
-    <?php elseif ($title == 'Barang' || $title == 'Manage Account'): ?>
+    <?php elseif ($title == 'List Barang' || $title == 'Manage Account' || $title == 'Dashboard'): ?>
         <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
-        
     <?php endif; ?>
 </head>
 
-<body 
-data-success="<?= session()->getFlashdata('success') ?>" 
-data-error="<?= session()->getFlashdata('error') ?>"
-data-warning="<?= session()->getFlashdata('warning') ?>" 
-data-info="<?= session()->getFlashdata('info') ?>"
-data-question="<?= session()->getFlashdata('question') ?>"></body>
+<body data-success="<?= session()->getFlashdata('success') ?>" data-error="<?= session()->getFlashdata('error') ?>"
+    data-warning="<?= session()->getFlashdata('warning') ?>" data-info="<?= session()->getFlashdata('info') ?>"
+    data-question="<?= session()->getFlashdata('question') ?>"></body>

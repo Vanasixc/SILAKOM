@@ -15,11 +15,11 @@ class Auth extends BaseController
         $this->accountModel = new AccountDb();
     }
 
-    public function getLogin()
+    public function getIndex()
     {
         $data = [
             'title' => 'Login',
-            'isLoggin' => true,
+            'logged_in' => true,
         ];
 
         return view('pages/login', $data);
@@ -34,22 +34,23 @@ class Auth extends BaseController
         $user = $this->accountModel->where('username', $username)->first();
 
         if (!$user) {
-            return redirect()->to('auth/login')->with('error', 'Akun tidak ditemukan. Silakan lakukan Sign Up.');
+            return redirect()->to('auth')->with('error', 'Akun tidak ditemukan. Silakan lakukan Sign Up.');
         }
 
         if ($user['password'] !== $password) {
-            return redirect()->to('auth/login')->with('error', 'Password yang anda masukkan salah.');
+            return redirect()->to('auth')->with('error', 'Password yang anda masukkan salah.');
         }
 
         $session = session();
         $session->set([
-            'logged_in' => true,
-            'username' => $user['username'],
+            'id' => $user['id'],
             'name' => $user['name'],
-            'id' => $user['id']
+            'username' => $user['username'],
+            'role' => $user['role'],
+            'logged_in' => true
         ]);
 
-        return redirect()->to('dashboard')->with('success', 'Login berhasil! Selamat datang ' . $user['name'] . '!');
+        return redirect()->to('silakom')->with('success', 'Login berhasil! Selamat datang ' . $user['name'] . '!');
     }
 
     public function getRegister()
@@ -88,7 +89,13 @@ class Auth extends BaseController
 
         $this->accountModel->insert($data);
 
-        return redirect()->to('auth/login')->with('success', 'Registrasi berhasil!');
+        return redirect()->to('auth')->with('success', 'Registrasi berhasil!');
+    }
+
+    public function getLogout()
+    {
+        session()->destroy();
+        return redirect()->to('auth')->with('message', 'Anda telah berhasil logout.');
     }
 
 }
