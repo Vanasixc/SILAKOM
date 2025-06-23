@@ -26,7 +26,7 @@
                 </h5>
             </div>
             <div class="card-body">
-                <table class="table table-striped" id="tableAkun">
+                <table class="table table-striped nowrap" id="tableAkun" style="width: 100%;">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -45,4 +45,7 @@
         </div>
     </section>
 </div>
+
+<?= $this->include('partials/modals') ?>
+
 <?= $this->endSection() ?>

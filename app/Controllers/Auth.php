@@ -50,7 +50,7 @@ class Auth extends BaseController
             'logged_in' => true
         ]);
 
-        return redirect()->to('silakom')->with('success', 'Login berhasil! Selamat datang ' . $user['name'] . '!');
+        return redirect()->to('dashboard')->with('success', 'Login berhasil! Selamat datang ' . $user['name'] . '!');
     }
 
     public function getRegister()
@@ -98,5 +98,35 @@ class Auth extends BaseController
         return redirect()->to('auth')->with('message', 'Anda telah berhasil logout.');
     }
 
+    //method setelah login
+
+    public function getUserdata($id = null)
+    {
+        $data = $this->accountModel->find($id);
+        if ($data) {
+            return $this->response->setJSON($data);
+        } else {
+            return $this->response->setStatusCode(404)->setJSON(['error' => 'User not found']);
+        }
+    }
+
+    public function postUpdate($id = null)
+    {
+        $data = [
+            'name' => $this->request->getPost('name'),
+            'username' => $this->request->getPost('username'),
+        ];
+
+        $newSession = $this->accountModel->update($id, $data);
+        $sessionNow = session()->get('id');
+        
+        if ($newSession && $sessionNow == $id) {
+            session()->set([
+                'nama' => $data['nama'],
+                'username' => $data['username'],
+            ]);
+        }
+        return redirect()->to('dashboard/manageaccount')->with('success', 'Data berhasil di edit!');
+    }
 }
 

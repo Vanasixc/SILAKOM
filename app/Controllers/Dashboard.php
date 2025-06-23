@@ -7,6 +7,7 @@ use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\AccountDb;
 use Hermawan\DataTables\DataTable;
 use App\Models\PinjamBarang;
+use App\Models\BarangDb;
 
 
 class Dashboard extends BaseController
@@ -14,12 +15,16 @@ class Dashboard extends BaseController
 
     protected $accountModel;
     protected $pinjamBarang;
+    protected $barangModel;
+
     public function __construct()
     {
         $this->accountModel = new AccountDb();
         $this->pinjamBarang = new PinjamBarang();
+        $this->barangModel = new BarangDb();
     }
 
+    //method untuk menampilkan halaman dashboard
     public function getIndex()
     {
         if (session()->get('role') == 'admin') {
@@ -53,6 +58,7 @@ class Dashboard extends BaseController
         return view('pages/manage_account', $data);
     }
 
+
     // Method untuk mengambil data dari database untuk Datatables
     public function postTableaccount()
     {
@@ -68,9 +74,9 @@ class Dashboard extends BaseController
                 }
                 return '<span class="badge bg-danger">Banned</span>';
             })
-            ->add('action', function ($row): string {
+            ->add('action', function ($row) {
                 $editBtn = '<button type="button" class="btn btn-primary btn-sm me-1 btn-edit" data-id="' . $row->id . '">Edit</button>';
-                $deleteBtn = '<button type="button" class="btn btn-danger btn-sm me-1 btn-delete" data-id="' . $row->id . '">Hapus</button>';
+                $deleteBtn = '<button type="button" class="btn btn-danger btn-sm btn-delete" data-id="' . $row->id . '" data-name="' . esc($row->name) . '">Hapus</button>';
                 return $editBtn . $deleteBtn;
             })
             ->toJson(true);
@@ -114,8 +120,11 @@ class Dashboard extends BaseController
                 if (session()->get('role') == 'admin') {
                     $editBtn = '<button type="button" class="btn btn-warning btn-sm me-1 btn-edit" data-id="' . $row->id_barang . '">Edit</button>';
                 }
-                $pinjamBtn = '<button type="button" class="btn btn-primary btn-sm me-1 btn-pinjam" data-id="' . $row->id_barang . '">Pinjam</button>';
-
+                $pinjamBtn = '<button type="button" class="btn btn-primary btn-sm me-1 btn-pinjam" 
+                    data-id="' . $row->id_barang . '" 
+                    data-kode="' . esc($row->kode_barang) . '" 
+                    data-nama="' . esc($row->nama_barang) . '"
+                    data-kondisi="' . esc($row->kondisi) . '">Pinjam</button>';
                 return $pinjamBtn . $editBtn;
             })
             ->toJson(true);
@@ -127,7 +136,6 @@ class Dashboard extends BaseController
         $db = db_connect();
 
         // Membuat query SQL CASE untuk menentukan status secara dinamis di level database
-        // Ini jauh lebih efisien.
         $statusCase = "CASE 
             WHEN peminjaman.status_peminjaman = 'Sudah Kembali' THEN 'Dikembalikan'
             WHEN NOW() > peminjaman.deadline_kembali THEN 'Terlambat'
@@ -157,7 +165,7 @@ class Dashboard extends BaseController
             })
             ->edit('status_final', function ($row) {
                 $status = $row->status_final;
-                $badgeClass = 'bg-primary'; // Default untuk 'Dipinjam'
+                $badgeClass = 'bg-primary';
                 if ($status == 'Dikembalikan') {
                     $badgeClass = 'bg-success';
                 } elseif ($status == 'Terlambat') {
@@ -167,4 +175,60 @@ class Dashboard extends BaseController
             })
             ->toJson(true);
     }
+
+    //method fungsi
+    public function postDeleteaccount($id = null)
+    {
+        if ($id == session()->get('id')) {
+            return redirect()->to('dashboard/manageaccount')->with('error', 'Anda tidak dapat menghapus akun yang sedang digunakan');
+        }
+
+        $user = $this->accountModel->find($id);
+
+        if ($user) {
+            $this->accountModel->delete($id);
+            return redirect()->to('dashboard/manageaccount')->with('message', 'Akun berhasil dihapus.');
+        } else {
+            return redirect()->to('dashboard/manageaccount')->with('error', 'Akun tidak ditemukan.');
+        }
+    }
+
+    public function postSimpan()
+    {
+        $id_barang = $this->request->getPost('id_barang');
+        $jumlah_pinjam = $this->request->getPost('jumlah_pinjam');
+        $deadline_kembali = $this->request->getPost('deadline_kembali');
+
+        $barang = $this->barangModel->find($id_barang);
+        if (!$barang) {
+            return redirect()->to('/dashboard/listbarang')->with('error', 'Barang tidak ditemukan.');
+        }
+
+        $totalDipinjam = $this->pinjamBarang->where('id_barang', $id_barang)
+            ->where('status_peminjaman', 'Dipinjam')
+            ->selectSum('jumlah_pinjam')->first()['jumlah_pinjam'] ?? 0;
+        $stokTersedia = $barang['stok_total'] - $totalDipinjam;
+
+        if ($jumlah_pinjam > $stokTersedia) {
+            return redirect()->to('/dashboard/listbarang')->with('error', 'Maaf, jumlah yang ingin dipinjam melebihi stok yang tersedia (' . $stokTersedia . ' unit).');
+        }
+
+        if (empty($deadline_kembali) || $jumlah_pinjam <= 0) {
+            return redirect()->to('/dashboard/listbarang')->with('error', 'Data yang diinput tidak valid.');
+        }
+
+        $data = [
+            'id_barang' => $id_barang,
+            'id_user_peminjam' => session()->get('id'),
+            'jumlah_pinjam' => $jumlah_pinjam,
+            'tanggal_pinjam' => date('Y-m-d H:i:s'), 
+            'deadline_kembali' => $deadline_kembali,
+            'status_peminjaman' => 'Dipinjam' 
+        ];
+
+        $this->pinjamBarang->insert($data);
+
+        return redirect()->to('/dashboard/listbarang')->with('success', 'Barang berhasil dipinjam!');
+    }
 }
+

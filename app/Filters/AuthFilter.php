@@ -31,10 +31,8 @@ class AuthFilter implements FilterInterface
         $uri = service('uri');
         $userRole = session()->get('role');
 
-        if ($uri->getSegment(2) === 'manageaccount') {
-            if ($userRole !== 'admin') {
-                return redirect()->to('/dashboard')->with('error', 'Akses terbatas');
-            }
+        if ($uri->getSegment(1) === 'admin' && session()->get('role') !== 'admin') {
+            return redirect()->to('dashboard')->with('error', 'Akses ditolak.');
         }
     }
 

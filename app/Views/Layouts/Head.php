@@ -28,9 +28,10 @@
 
     <?php elseif ($title == 'List Barang' || $title == 'Manage Account' || $title == 'Dashboard'): ?>
         <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.bootstrap5.css">
     <?php endif; ?>
 </head>
 
 <body data-success="<?= session()->getFlashdata('success') ?>" data-error="<?= session()->getFlashdata('error') ?>"
     data-warning="<?= session()->getFlashdata('warning') ?>" data-info="<?= session()->getFlashdata('info') ?>"
-    data-question="<?= session()->getFlashdata('question') ?>"></body>
+    data-question="<?= session()->getFlashdata('question') ?>" data-delete="<?= session()->getFlashdata('delete') ?>">

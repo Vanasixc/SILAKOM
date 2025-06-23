@@ -26,7 +26,7 @@
             </h5>
         </div>
         <div class="card-body">
-            <table class="table table-striped" id="tablepinjam">
+            <table class="table table-striped nowrap" id="tablePinjam" style="width: 100%;">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -41,6 +41,7 @@
                 </thead>
                 <tbody>
                 </tbody>
+
             </table>
         </div>
     </div>
